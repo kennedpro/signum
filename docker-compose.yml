@@ -1,0 +1,62 @@
+# ─────────────────────────────────────────────────────────────
+# SIGNUM · Entorno local completo
+#
+#   Solo base de datos (recomendado para desarrollar):
+#     docker compose up -d db
+#
+#   Aplicación completa (base de datos + web):
+#     docker compose --profile full up -d --build
+# ─────────────────────────────────────────────────────────────
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: signum-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: signum
+      POSTGRES_PASSWORD: signum
+      POSTGRES_DB: signum
+    ports:
+      - "5432:5432"
+    volumes:
+      - signum_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U signum -d signum"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    profiles: ["full"]
+    build:
+      context: .
+      args:
+        DOCKER_BUILD: "1"
+    container_name: signum-web
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://signum:signum@db:5432/signum
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+    ports:
+      - "3000:3000"
+
+  # Interfaz web para inspeccionar la base de datos (opcional)
+  adminer:
+    profiles: ["full", "tools"]
+    image: adminer:latest
+    container_name: signum-adminer
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+
+volumes:
+  signum_pgdata:
