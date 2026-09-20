@@ -1,0 +1,1866 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--ff-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--ff-display), ui-sans-serif, sans-serif;
+  --font-mono: var(--ff-mono), ui-monospace, monospace;
+  --font-hand: var(--ff-hand), cursive;
+
+  /* Consola */
+  --color-void: #04060b;
+  --color-deep: #070b13;
+  --color-panel: #0b111c;
+  --color-panel2: #101a29;
+  --color-line: #1a2537;
+  --color-line2: #24334a;
+  --color-neon: #22d3ee;
+  --color-neonsoft: #67e8f9;
+  --color-plasma: #a78bfa;
+  --color-gold: #f4c145;
+  --color-ink: #e2e8f0;
+
+  --shadow-hud: 0 1px 0 rgb(255 255 255 / 0.03) inset,
+    0 20px 50px -28px rgb(0 0 0 / 0.9);
+  --shadow-neon: 0 0 0 1px rgb(34 211 238 / 0.35),
+    0 12px 34px -14px rgb(34 211 238 / 0.55);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  background-color: var(--color-void);
+  color: #cbd5e1;
+  background-image:
+    radial-gradient(1100px 560px at 88% -12%, rgb(34 211 238 / 0.09), transparent 62%),
+    radial-gradient(820px 460px at -8% 108%, rgb(167 139 250 / 0.09), transparent 58%),
+    linear-gradient(rgb(148 163 184 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(148 163 184 / 0.035) 1px, transparent 1px);
+  background-size: auto, auto, 46px 46px, 46px 46px;
+  background-attachment: fixed;
+}
+
+::selection {
+  background: rgb(34 211 238 / 0.3);
+  color: #ecfeff;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgb(100 116 139 / 0.28);
+  border-radius: 20px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgb(34 211 238 / 0.45);
+  background-clip: content-box;
+}
+
+/* ── HUD ───────────────────────────────────────────────────── */
+.hud {
+  position: relative;
+  background: linear-gradient(180deg, rgb(16 26 41 / 0.72), rgb(11 17 28 / 0.86));
+  border: 1px solid var(--color-line);
+  box-shadow: var(--shadow-hud);
+  backdrop-filter: blur(6px);
+}
+.hud-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgb(148 163 184 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(148 163 184 / 0.05) 1px, transparent 1px);
+  background-size: 26px 26px;
+  mask-image: radial-gradient(circle at 50% 0%, #000 0%, transparent 78%);
+}
+.corner-tl,
+.corner-br {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  border-color: rgb(34 211 238 / 0.55);
+  pointer-events: none;
+}
+.corner-tl {
+  top: -1px;
+  left: -1px;
+  border-top: 1.5px solid;
+  border-left: 1.5px solid;
+}
+.corner-br {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1.5px solid;
+  border-right: 1.5px solid;
+}
+
+.neon-line {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(34 211 238 / 0.7),
+    rgb(167 139 250 / 0.5),
+    transparent
+  );
+}
+
+@keyframes scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(400%);
+  }
+}
+.scanline::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  height: 28%;
+  background: linear-gradient(180deg, transparent, rgb(34 211 238 / 0.07), transparent);
+  animation: scan 5.5s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgb(34 211 238 / 0.4);
+  }
+  80% {
+    box-shadow: 0 0 0 10px rgb(34 211 238 / 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgb(34 211 238 / 0);
+  }
+}
+.pulse-ring {
+  animation: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes dashmove {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+.anim-dash {
+  stroke-dasharray: 5 7;
+  animation: dashmove 1.2s linear infinite;
+}
+
+/* ── Capa ambiental cinematográfica ───────────────────────────── */
+@keyframes cine-twinkle {
+  0%, 100% { opacity: 0.12; transform: scale(0.75); }
+  50% { opacity: 0.9; transform: scale(1.2); }
+}
+@keyframes cine-drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(4%, -3%, 0) scale(1.06); }
+}
+@keyframes cine-drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-5%, 4%, 0) scale(1.08); }
+}
+.cine-nebula {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(110px);
+  opacity: 0.55;
+}
+.cine-nebula--a {
+  left: -18%;
+  top: -22%;
+  height: 62vh;
+  width: 62vh;
+  background: radial-gradient(circle, rgb(34 211 238 / 0.14), transparent 70%);
+  animation: cine-drift-a 22s ease-in-out infinite;
+}
+.cine-nebula--b {
+  right: -20%;
+  bottom: -18%;
+  height: 58vh;
+  width: 58vh;
+  background: radial-gradient(circle, rgb(167 139 250 / 0.14), transparent 70%);
+  animation: cine-drift-b 26s ease-in-out infinite;
+}
+@keyframes cine-beam-sweep {
+  0% { transform: translate3d(-40%, -30%, 0) rotate(16deg); opacity: 0; }
+  6% { opacity: 0.5; }
+  40% { opacity: 0.28; }
+  58% { opacity: 0; }
+  100% { transform: translate3d(140%, 30%, 0) rotate(16deg); opacity: 0; }
+}
+.cine-beam {
+  position: absolute;
+  top: -25%;
+  left: -25%;
+  width: 40%;
+  height: 170%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgb(103 232 249 / 0.16),
+    rgb(167 139 250 / 0.09),
+    transparent
+  );
+  filter: blur(8px);
+  animation: cine-beam-sweep 13s ease-in-out infinite;
+  animation-delay: 1.5s;
+}
+@keyframes cine-grain-shift {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  10% { transform: translate3d(-1%, -2%, 0); }
+  30% { transform: translate3d(2%, -3%, 0); }
+  50% { transform: translate3d(1%, 3%, 0); }
+  70% { transform: translate3d(-2%, 1%, 0); }
+  90% { transform: translate3d(3%, -1%, 0); }
+}
+.film-grain {
+  position: absolute;
+  inset: -12%;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 180px 180px;
+  animation: cine-grain-shift 1.6s steps(3) infinite;
+}
+.cine-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, transparent 45%, rgb(2 4 9 / 0.5) 100%),
+    linear-gradient(to bottom, rgb(2 4 9 / 0.35), transparent 16%, transparent 84%, rgb(2 4 9 / 0.4));
+}
+
+/* ── Editor de escritorio (pestaña aparte, fondo claro tipo Word) ── */
+.editor-shell {
+  background: #e9edf1;
+  color: #1e293b;
+  background-image: none;
+}
+.editor-shell .paper {
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.15), 0 12px 32px -12px rgb(0 0 0 / 0.25);
+  border-color: #cbd5e1;
+}
+.editor-shell .tiptap div[data-signature-slot] {
+  border-color: rgb(13 148 136 / 0.5);
+}
+
+/* ══ HOJA TAMAÑO CARTA — como Word → PDF ══════════════════════
+   21,59 × 27,94 cm · márgenes 2,54 cm (1") en los cuatro lados.
+   La misma geometría en editor, expediente, portal de firma e
+   impresión, para que lo que se ve sea lo que se firma.          */
+:root {
+  --page-w: 21.59cm;
+  --page-min-h: 27.94cm;
+  --page-margin: 2.54cm;
+  --doc-font: "Times New Roman", "Liberation Serif", "Nimbus Roman", Times, Georgia, serif;
+  --doc-size: 12pt;
+  --doc-font-office: Arial, "Liberation Sans", Helvetica, sans-serif;
+  --doc-size-office: 11pt;
+}
+
+.paper {
+  box-sizing: border-box;
+  width: var(--page-w);
+  max-width: 100%;
+  min-height: var(--page-min-h);
+  margin-left: auto;
+  margin-right: auto;
+  --pt: var(--page-margin);
+  --pr: var(--page-margin);
+  --pb: var(--page-margin);
+  --pl: var(--page-margin);
+  padding: var(--pt) var(--pr) var(--pb) var(--pl) !important;
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid rgb(148 163 184 / 0.25);
+  box-shadow: 0 0 0 1px rgb(34 211 238 / 0.07), 0 40px 90px -40px rgb(0 0 0 / 0.9);
+  position: relative;
+  border-radius: 2px !important;
+}
+.paper::before {
+  content: none;
+}
+/* Guías de margen (solo pantalla, se ocultan al imprimir) */
+.paper::after {
+  content: "";
+  position: absolute;
+  inset: var(--page-margin);
+  border: 1px dashed rgb(14 116 144 / 0.12);
+  pointer-events: none;
+}
+
+/* ── Contenido del documento: tipografía de procesador de texto ── */
+.doc-content {
+  font-family: var(--doc-font-office);
+  font-size: var(--doc-size-office);
+  line-height: 1;
+  color: #000;
+  outline: none;
+  word-break: break-word;
+  text-align: justify;
+  hyphens: auto;
+}
+.doc-content h1 {
+  font-size: 14pt;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.3;
+  margin: 0 0 12pt;
+  color: #000;
+  text-align: center;
+  text-transform: uppercase;
+}
+.doc-content h2 {
+  font-size: 12pt;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  margin: 14pt 0 6pt;
+  color: #000;
+  border: none;
+  padding: 0;
+  text-align: left;
+}
+.doc-content h3 {
+  font-size: 12pt;
+  font-weight: 700;
+  font-style: italic;
+  margin: 10pt 0 4pt;
+}
+.doc-content p {
+  margin: 0;
+  min-height: 1em;
+}
+.doc-content ul,
+.doc-content ol {
+  margin: 0.6em 0;
+  padding-left: 1.4em;
+}
+.doc-content ul {
+  list-style: disc;
+}
+.doc-content ul li {
+  position: static;
+  padding-left: 0.2em;
+  margin: 0 0 4pt;
+}
+.doc-content ul li::before {
+  content: none;
+}
+.doc-content ol {
+  list-style: decimal;
+}
+.doc-content ol li {
+  margin: 0 0 4pt;
+  padding-left: 0.2em;
+}
+.doc-content ol li::marker {
+  color: #000;
+  font-weight: 400;
+  font-size: 1em;
+}
+.doc-content blockquote {
+  border: none;
+  padding: 0;
+  margin: 0 0 8pt 1.27cm;
+  color: #000;
+  font-style: normal;
+}
+.doc-content hr {
+  border: none;
+  border-top: 1px solid rgb(28 25 23 / 0.22);
+  margin: 1.6em 0;
+}
+.doc-content mark {
+  background: #fef08a;
+  border-radius: 2px;
+  padding: 0 2px;
+}
+.doc-content a {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+.doc-content em {
+  color: #57534e;
+}
+
+/* ══ CABECERA DE PRIMERA PÁGINA (logo + datos de la empresa) ═══ */
+.doc-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 0 12px;
+  margin-bottom: 18px;
+  border-bottom: 2px solid #0f766e;
+  font-family: var(--ff-sans), system-ui, sans-serif;
+  page-break-after: avoid;
+}
+.doc-header__logo {
+  width: 62px;
+  flex-shrink: 0;
+}
+.doc-header__logo .sig-logo {
+  width: 62px;
+  height: 74px;
+}
+.doc-header__body {
+  min-width: 0;
+  flex: 1;
+}
+.doc-header__name {
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.25;
+  color: #1c1917;
+}
+.doc-header__meta {
+  font-size: 8.6px;
+  line-height: 1.45;
+  color: #57534e;
+}
+.doc-header__code {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+}
+.doc-header__chip {
+  border: 1px solid rgb(28 25 23 / 0.3);
+  border-radius: 2px;
+  padding: 2px 7px;
+  font-family: var(--ff-mono), monospace;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #1c1917;
+}
+.doc-header__num {
+  font-family: var(--ff-mono), monospace;
+  font-size: 8.4px;
+  color: #57534e;
+}
+.doc-header__num--draft {
+  color: #b45309;
+  border: 1px dashed #d97706;
+  border-radius: 2px;
+  padding: 1px 5px;
+}
+.doc-header__bar {
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 2px;
+  width: 92px;
+}
+
+/* ══ NORMAS APA 7.ª EDICIÓN ═══════════════════════════════════
+   Times New Roman 12 pt · interlineado doble · márgenes 1" ·
+   sangría de primera línea 0,5" (1,27 cm) · texto alineado a la
+   izquierda sin justificar · títulos por niveles APA.            */
+.doc-apa {
+  font-family: var(--doc-font);
+  font-size: 12pt;
+  line-height: 2;
+  color: #000;
+  text-align: left;
+  hyphens: none;
+}
+/* Nivel 1: centrado, negrita */
+.doc-apa h1 {
+  font-size: 12pt;
+  font-weight: 700;
+  text-align: center;
+  text-transform: none;
+  margin: 0;
+  border: none;
+  line-height: 2;
+}
+/* Nivel 2: alineado a la izquierda, negrita */
+.doc-apa h2 {
+  font-size: 12pt;
+  font-weight: 700;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0;
+  border: none;
+  padding: 0;
+  margin: 0;
+  line-height: 2;
+}
+/* Nivel 3: izquierda, negrita cursiva */
+.doc-apa h3 {
+  font-size: 12pt;
+  font-weight: 700;
+  font-style: italic;
+  text-align: left;
+  margin: 0;
+  line-height: 2;
+}
+.doc-apa p {
+  margin: 0;
+  text-indent: 1.27cm;
+  line-height: 2;
+}
+.doc-apa p:empty {
+  text-indent: 0;
+}
+.doc-apa h1 + p,
+.doc-apa h2 + p,
+.doc-apa blockquote + p {
+  text-indent: 1.27cm;
+}
+.doc-apa ul,
+.doc-apa ol {
+  margin: 0 0 0 1.27cm;
+  padding-left: 1.2em;
+}
+.doc-apa li {
+  margin: 0;
+}
+.doc-apa blockquote {
+  margin: 0 0 0 1.27cm;
+  border: none;
+  font-style: normal;
+  color: #1c1917;
+  padding: 0;
+}
+/* Referencias con sangría francesa */
+.doc-apa .apa-ref,
+.doc-apa p.apa-ref {
+  text-indent: -1.27cm;
+  padding-left: 1.27cm;
+  margin: 0;
+}
+.doc-apa .sig-ghost,
+.doc-apa .doc-header {
+  font-family: var(--ff-sans), system-ui, sans-serif;
+  line-height: normal;
+  text-indent: 0;
+}
+.apa-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgb(14 116 144 / 0.4);
+  border-radius: 2px;
+  padding: 1px 6px;
+  font-family: var(--ff-mono), monospace;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #0e7490;
+}
+
+/* ══ CONTENEDOR FANTASMA (maquetación rígida 120 × 44 mm) ═══
+   El bloque vacío y el bloque firmado ocupan EXACTAMENTE el mismo
+   espacio. El texto inferior queda congelado en sus coordenadas
+   definitivas desde la creación del documento. */
+.sig-ghost {
+  position: relative;
+  display: block;
+  margin: 12px 0 18px;
+  padding: 0;
+  overflow: visible; /* el sello completo nunca se corta */
+  min-height: 44mm;
+  font-family: var(--ff-sans), system-ui, sans-serif;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+/* El contenedor vacío SÍ conserva sus 120 × 44 mm para no mover el texto */
+.sig-ghost--empty {
+  height: 44mm !important;
+  overflow: hidden !important;
+}
+/* El contenedor firmado puede crecer verticalmente sin cortarse */
+.sig-ghost--signed {
+  height: auto !important;
+  min-height: 44mm;
+}
+
+/* Marcador invisible: guía láser para el motor de inyección */
+.sig-anchor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  color: transparent;
+  font-size: 1px;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Estado firmado ─────────────────────────────────────────── */
+.sig-ghost__ink {
+  height: 34px;
+  display: flex;
+  align-items: flex-end;
+}
+.sig-ghost__ink img {
+  height: 34px;
+  width: auto;
+  max-width: 230px;
+  object-fit: contain;
+  object-position: left bottom;
+}
+.sig-ghost__rule {
+  width: 230px;
+  border-top: 1px solid #1c1917;
+  margin: 1px 0 2px;
+}
+.sig-ghost__role {
+  font-size: 8.6px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #57534e;
+  margin-bottom: 3px;
+}
+.sig-stamp {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+  padding: 4px 8px 4px 4px;
+  border: 1px solid rgb(28 25 23 / 0.32);
+  border-radius: 2px;
+  background: linear-gradient(180deg, #ffffff 0%, #fdfcf8 100%);
+}
+.sig-logo {
+  width: 60px;
+  height: 74px;
+  flex-shrink: 0;
+}
+.sig-logo--img {
+  object-fit: contain;
+  object-position: center;
+}
+.sig-stamp__bracket {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: #0891b2;
+  pointer-events: none;
+}
+.sig-stamp__bracket--tl {
+  top: -1px;
+  left: -1px;
+  border-top: 1.4px solid;
+  border-left: 1.4px solid;
+}
+.sig-stamp__bracket--br {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1.4px solid;
+  border-right: 1.4px solid;
+}
+.sig-stamp__meta {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  padding-top: 2px;
+  color: #1c1917;
+}
+.sig-stamp__title {
+  font-size: 8.2px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.sig-stamp__line {
+  font-size: 8.2px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.sig-stamp__key {
+  font-weight: 600;
+}
+.sig-ghost__hash {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  font-family: var(--ff-mono), monospace;
+  font-size: 6.6px;
+  color: #78716c;
+}
+.sig-ghost__chip {
+  flex-shrink: 0;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  border-radius: 2px;
+  padding: 0 3px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.sig-ghost__hex {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Estado vacío (contenedor reservado) ───────────────────── */
+.sig-ghost--empty {
+  border: 1px dashed rgb(8 145 178 / 0.5);
+  border-radius: 3px;
+  padding: 14px 14px 10px;
+  background: repeating-linear-gradient(
+    45deg,
+    rgb(8 145 178 / 0.035) 0 9px,
+    transparent 9px 18px
+  );
+}
+.sig-ghost__tag {
+  position: absolute;
+  top: -7px;
+  left: 11px;
+  background: #fdfcf9;
+  padding: 0 5px;
+  font-size: 7.4px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #0e7490;
+}
+.sig-ghost__empty-rule {
+  margin-top: 44px;
+  width: 230px;
+  border-top: 1px solid rgb(28 25 23 / 0.45);
+}
+.sig-ghost__hint {
+  margin-top: 3px;
+  font-size: 7.8px;
+  line-height: 1.3;
+  color: #78716c;
+}
+
+/* ── Contenedor fantasma dentro del editor ─────────────────── */
+.tiptap div[data-signature-slot] {
+  position: relative;
+  width: 120mm;
+  height: 44mm;
+  margin: 12px 0 18px;
+  border: 1px dashed rgb(8 145 178 / 0.5);
+  border-radius: 3px;
+  background: repeating-linear-gradient(
+    45deg,
+    rgb(8 145 178 / 0.05) 0 9px,
+    transparent 9px 18px
+  );
+  cursor: pointer;
+  overflow: hidden;
+}
+.tiptap div[data-signature-slot]::before {
+  content: "◈ CONTENEDOR PROTEGIDO 120×44 mm · FIRMA DIGITAL";
+  position: absolute;
+  top: 10px;
+  left: 14px;
+  font-family: var(--ff-mono), monospace;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #0e7490;
+}
+.tiptap div[data-signature-slot]::after {
+  content: attr(data-signature-label);
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  padding-top: 6px;
+  width: 230px;
+  border-top: 1px solid rgb(28 25 23 / 0.45);
+  font-family: var(--ff-sans), sans-serif;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #44403c;
+}
+.tiptap div[data-signature-slot].ProseMirror-selectednode {
+  border-color: #0891b2;
+  box-shadow: 0 0 0 3px rgb(8 145 178 / 0.18);
+}
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #a8a29e;
+  pointer-events: none;
+  height: 0;
+}
+
+/* ── Cabecera tipo oficio (código, ciudad-fecha, destinatario, asunto) ── */
+.doc-meta {
+  font-family: var(--doc-font);
+  font-size: 12pt;
+  line-height: 1; /* 1,0 exacto, como en el oficio impreso */
+  color: #000;
+  margin: 0 0 12pt;
+}
+.doc-meta p {
+  margin: 0; /* sin espacio antes ni después entre líneas de cabecera */
+  text-indent: 0;
+  line-height: 1;
+}
+.doc-meta__code {
+  font-weight: 700;
+  margin: 0 0 4pt 0;
+  line-height: 1;
+}
+.doc-meta__strong {
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.doc-meta__subject {
+  margin-top: 8pt;
+  line-height: 1;
+}
+
+/* ── Canvas de firma ───────────────────────────────────────── */
+.sig-canvas {
+  background:
+    repeating-linear-gradient(180deg, transparent 0 39px, rgb(28 25 23 / 0.09) 39px 40px),
+    linear-gradient(180deg, #ffffff, #f7f5f0);
+  touch-action: none;
+  cursor: crosshair;
+}
+
+/* ── Impresión ─────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  /* En pantalla estrecha la hoja se adapta al ancho; al imprimir vuelve a carta */
+  .paper {
+    width: 100%;
+    min-height: 0;
+    padding: 1.25rem 1rem !important;
+  }
+  .paper::after {
+    content: none;
+  }
+  .doc-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .doc-header__logo {
+    width: 48px;
+  }
+  .doc-header__logo .sig-logo {
+    width: 48px;
+    height: 58px;
+  }
+  .sig-ghost,
+  .tiptap div[data-signature-slot] {
+    width: 100% !important;
+    max-width: 100%;
+    height: auto !important;
+    min-height: 44mm;
+  }
+}
+
+/* ══ IMPRESIÓN / PDF — página carta con márgenes de 1" ════════
+   El navegador pagina el documento igual que Word → PDF:
+   la hoja NO se escala, se corta por páginas respetando márgenes. */
+@page {
+  size: Letter portrait;
+  margin: 2.54cm;
+}
+@media print {
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  /*
+    CAUSA de las páginas en blanco: visibility:hidden CONSERVA el espacio del
+    menú lateral, la cabecera y el panel derecho → aparecen hojas vacías.
+    Retiramos del flujo TODO lo que no contiene el documento, así solo existe
+    la página del documento.
+  */
+  body *:not(:has(#print-area)):not(#print-area):not(#print-area *) {
+    display: none !important;
+  }
+  #print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  /* La hoja en pantalla ya tiene los márgenes; en papel los pone @page */
+  #print-area .paper {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+  /* Encabezado y pie: en papel dejan de ser capas absolutas y fluyen con el documento */
+  #print-area .doc-sheet__header,
+  #print-area .doc-sheet__footer,
+  #print-area .wd-zone {
+    position: static !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    max-height: none !important;
+    outline: none !important;
+    background: transparent !important;
+  }
+  #print-area .doc-sheet__header,
+  #print-area .wd-zone--header { margin-bottom: 14pt; }
+  #print-area .doc-sheet__footer,
+  #print-area .wd-zone--footer { margin-top: 14pt; }
+  #print-area .wd-zone__tag,
+  #print-area .wd-margin-guides,
+  #print-area .wd-pagebreak { display: none !important; }
+  #print-area .wd-body { opacity: 1 !important; min-height: 0 !important; }
+  #print-area .paper::after {
+    content: none;
+  }
+  /* Nada que no sea el documento (certificados, paneles, avisos, contenedor vacío) */
+  #print-area .hud,
+  #print-area .no-print,
+  #print-area .sig-ghost--empty {
+    break-inside: avoid;
+  }
+  #print-area .hud,
+  #print-area .no-print {
+    display: none !important;
+  }
+  .doc-content h1,
+  .doc-content h2,
+  .doc-content h3 {
+    break-after: avoid;
+  }
+  .doc-content p,
+  .doc-content li {
+    orphans: 2;
+    widows: 2;
+  }
+  .sig-ghost,
+  .doc-header {
+    break-inside: avoid;
+  }
+  .sig-ghost__hint,
+  .sig-ghost__tag {
+    display: none;
+  }
+  .sig-ghost--empty {
+    border-color: transparent;
+    background: none;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  /* Sin espacio sobrante al final: evita la página vacía de cierre */
+  #print-area > :last-child {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+}
+
+/* ══ EDITOR DE ESCRITORIO SIGNUM ══════════════════════════════════
+   Cinta tipo procesador de texto moderno, integrada con la identidad
+   SIGNUM (barra de título oscura, acento cian/teal) sobre un lienzo
+   claro donde la hoja carta se ve exactamente como se firmará.      */
+.wd-shell {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  background: #e4e8ee;
+  color: #1e293b;
+  font-family: var(--ff-sans), system-ui, sans-serif;
+}
+
+/* Barra de título */
+.wd-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 14px;
+  color: #e2e8f0;
+  background:
+    radial-gradient(circle at 0% 0%, rgb(34 211 238 / 0.14), transparent 30%),
+    linear-gradient(90deg, #07161c, #0b2229 60%, #0d2a31);
+  border-bottom: 1px solid rgb(34 211 238 / 0.18);
+}
+.wd-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #fff;
+  text-decoration: none;
+}
+.wd-brand__mark {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  color: #06201f;
+  font-size: 14px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7ef0e0, #22b8b0);
+  clip-path: polygon(50% 0, 93% 24%, 93% 76%, 50% 100%, 7% 76%, 7% 24%);
+}
+.wd-brand__type {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  line-height: 1;
+}
+.wd-brand__type small {
+  margin-top: 3px;
+  color: #67e8f9;
+  font-size: 7px;
+  letter-spacing: 0.2em;
+}
+.wd-titlebar__sep {
+  width: 1px;
+  height: 24px;
+  background: rgb(255 255 255 / 0.12);
+}
+.wd-doc {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+}
+.wd-doc__title {
+  min-width: 0;
+  flex: 1;
+  max-width: 520px;
+  padding: 5px 8px;
+  color: #f8fafc;
+  font-size: 13.5px;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  outline: none;
+  transition: 150ms;
+}
+.wd-doc__title:hover:not(:disabled) { border-color: rgb(255 255 255 / 0.14); }
+.wd-doc__title:focus { background: rgb(255 255 255 / 0.06); border-color: rgb(34 211 238 / 0.5); }
+.wd-status,
+.wd-lock {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: 999px;
+}
+.wd-status.is-saved { color: #6ee7b7; background: rgb(52 211 153 / 0.12); }
+.wd-status.is-dirty { color: #fcd34d; background: rgb(251 191 36 / 0.12); }
+.wd-status.is-saving { color: #67e8f9; background: rgb(34 211 238 / 0.12); }
+.wd-lock { color: #cbd5e1; background: rgb(255 255 255 / 0.08); }
+.wd-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.wd-toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 6px;
+}
+.wd-toast.is-ok { color: #a7f3d0; background: rgb(16 185 129 / 0.18); }
+.wd-toast.is-err { color: #fecaca; background: rgb(244 63 94 / 0.2); }
+.wd-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgb(255 255 255 / 0.06);
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 7px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: 150ms;
+}
+.wd-action:hover:not(:disabled) { background: rgb(255 255 255 / 0.12); }
+.wd-action:disabled { opacity: 0.45; cursor: not-allowed; }
+.wd-action.is-on { color: #06201f; background: #fcd34d; border-color: #fcd34d; }
+.wd-action--primary { color: #06201f; background: linear-gradient(135deg, #67e8f9, #14b8a6); border-color: transparent; }
+.wd-action--primary:hover:not(:disabled) { background: linear-gradient(135deg, #7df3ff, #2dd4bf); }
+.wd-action--ghost { background: transparent; }
+
+/* Pestañas y cinta */
+.wd-ribbon-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: #fff;
+  border-bottom: 1px solid #cbd5e1;
+  box-shadow: 0 2px 8px rgb(15 23 42 / 0.06);
+}
+.wd-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+.wd-tab {
+  position: relative;
+  padding: 9px 13px;
+  color: #475569;
+  font-size: 12.5px;
+  font-weight: 500;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.wd-tab:hover { color: #0f172a; }
+.wd-tab.is-active { color: #0f766e; font-weight: 700; }
+.wd-tab.is-active::after {
+  position: absolute;
+  right: 10px;
+  bottom: -1px;
+  left: 10px;
+  height: 2px;
+  content: "";
+  background: #0f766e;
+  border-radius: 2px 2px 0 0;
+}
+.wd-tabs__info {
+  margin-left: auto;
+  color: #64748b;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.wd-tabs__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  margin-left: 10px;
+  padding: 0 9px;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 600;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.wd-ribbon {
+  display: flex;
+  min-height: 86px;
+  align-items: stretch;
+  gap: 2px;
+  padding: 6px 10px 4px;
+  overflow-x: auto;
+  background: #f8fafc;
+}
+.rb-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 10px;
+  border-right: 1px solid #e2e8f0;
+}
+.rb-group:last-child { border-right: 0; }
+.rb-group--wide { align-items: flex-start; }
+.rb-group__body {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  gap: 2px;
+}
+.rb-group__title {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.rb-rows { display: flex; flex-direction: column; gap: 3px; }
+.rb-row { display: flex; align-items: center; gap: 2px; }
+.rb-btn {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  color: #334155;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 120ms;
+}
+.rb-btn:hover:not(:disabled) { background: #e2e8f0; }
+.rb-btn.is-active { color: #0f766e; background: #ccfbf1; border-color: #99f6e4; }
+.rb-btn:disabled { opacity: 0.32; cursor: not-allowed; }
+.rb-btn--danger:hover:not(:disabled) { color: #b91c1c; background: #fee2e2; }
+.rb-big {
+  display: flex;
+  min-width: 58px;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 8px 5px;
+  color: #334155;
+  font-size: 10.5px;
+  line-height: 1.1;
+  text-align: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 120ms;
+}
+.rb-big svg { color: #0f766e; }
+.rb-big:hover:not(:disabled) { background: #e2e8f0; }
+.rb-big.is-active { background: #ccfbf1; border-color: #99f6e4; color: #0f766e; }
+.rb-big:disabled { opacity: 0.35; cursor: not-allowed; }
+.rb-select {
+  height: 26px;
+  padding: 0 4px;
+  color: #1e293b;
+  font-size: 12px;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+}
+.rb-select:disabled { opacity: 0.5; }
+.rb-inline { display: inline-flex; align-items: center; gap: 4px; color: #475569; }
+.rb-vsep { width: 1px; height: 20px; margin: 0 3px; background: #e2e8f0; }
+.rb-color {
+  position: relative;
+  display: grid;
+  width: 30px;
+  height: 28px;
+  place-items: center;
+  color: #334155;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.rb-color:hover { background: #e2e8f0; }
+.rb-color i { position: absolute; right: 5px; bottom: 4px; left: 5px; height: 3px; border-radius: 2px; }
+.rb-color input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.rb-swatches {
+  display: grid;
+  grid-template-columns: repeat(6, 11px);
+  gap: 2px;
+  margin: 0 4px;
+}
+.rb-swatches button {
+  width: 11px;
+  height: 11px;
+  border: 1px solid rgb(0 0 0 / 0.18);
+  border-radius: 2px;
+  cursor: pointer;
+}
+.rb-swatches button:hover { transform: scale(1.25); }
+.rb-swatches--marks { grid-template-columns: repeat(3, 11px); }
+.rb-styles { display: flex; gap: 4px; }
+.st-card {
+  display: flex;
+  width: 62px;
+  height: 52px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: #334155;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 120ms;
+}
+.st-card:hover:not(:disabled) { border-color: #99f6e4; background: #f0fdfa; }
+.st-card.is-active { border-color: #0f766e; box-shadow: inset 0 0 0 1px #0f766e; background: #f0fdfa; }
+.st-card:disabled { opacity: 0.35; cursor: not-allowed; }
+.st-card small { font-size: 9px; color: #64748b; }
+.st-card .st-normal { font-family: var(--doc-font); font-size: 14px; }
+.st-card .st-h1 { font-family: var(--doc-font); font-size: 15px; font-weight: 700; text-transform: uppercase; }
+.st-card .st-h2 { font-family: var(--doc-font); font-size: 14px; font-weight: 700; }
+.st-card .st-h3 { font-family: var(--doc-font); font-size: 13px; font-weight: 700; font-style: italic; }
+.st-card .st-quote { font-family: var(--doc-font); font-size: 13px; font-style: italic; color: #475569; border-left: 2px solid #94a3b8; padding-left: 4px; }
+.rb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 9px;
+  color: #334155;
+  font-size: 11px;
+  font-weight: 600;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.rb-chip:hover:not(:disabled) { border-color: #5eead4; }
+.rb-chip.is-active { color: #0f766e; background: #ccfbf1; border-color: #5eead4; }
+.rb-chip:disabled { opacity: 0.4; cursor: not-allowed; }
+.rb-zoom { min-width: 44px; text-align: center; font-size: 12px; font-weight: 700; color: #0f172a; }
+.rb-hint { color: #64748b; font-size: 10.5px; line-height: 1.45; }
+.rb-hint code { font-family: var(--ff-mono), monospace; font-size: 10px; background: #e2e8f0; padding: 0 3px; border-radius: 3px; }
+.rb-info {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(150px, 220px));
+  gap: 3px 18px;
+  margin: 2px 0 0;
+  font-size: 11px;
+}
+.rb-info--3 { grid-template-columns: repeat(3, minmax(150px, 220px)); }
+.rb-info div { display: flex; gap: 6px; min-width: 0; }
+.rb-info dt { color: #64748b; }
+.rb-info dd { margin: 0; color: #0f172a; font-weight: 600; }
+
+/* Regla */
+.wd-ruler-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 6px 16px 6px;
+  overflow: hidden;
+  background: #eef1f5;
+  border-top: 1px solid #e2e8f0;
+}
+.wd-ruler {
+  position: relative;
+  height: 20px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 3px;
+}
+.wd-ruler__margin { position: absolute; top: 0; bottom: 0; background: #e2e8f0; }
+.wd-ruler__tick {
+  position: absolute;
+  bottom: 0;
+  height: 4px;
+  border-left: 1px solid #94a3b8;
+}
+.wd-ruler__tick.is-major { height: 7px; }
+.wd-ruler__tick em {
+  position: absolute;
+  top: -15px;
+  left: 3px;
+  color: #64748b;
+  font-size: 8.5px;
+  font-style: normal;
+}
+.wd-ruler__indent {
+  position: absolute;
+  top: 2px;
+  width: 0;
+  height: 0;
+  border-right: 5px solid transparent;
+  border-bottom: 7px solid #0f766e;
+  border-left: 5px solid transparent;
+  transform: translateX(-5px);
+}
+.wd-ruler__indent--right { border-bottom-color: #0f766e; }
+
+/* Lienzo, hoja y saltos de página reales */
+.wd-canvas { flex: 1; overflow: auto; padding: 14px 16px 64px; }
+.wd-ruler { flex: 0 0 auto; will-change: transform; }
+.wd-paper.is-preview { outline: none; }
+.wd-pagebreak {
+  position: absolute;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  height: 0;
+  border-top: 1px dashed rgb(15 118 110 / 0.55);
+  pointer-events: none;
+}
+.wd-pagebreak span {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  padding: 1px 8px;
+  color: #0f766e;
+  font-family: var(--ff-sans), system-ui, sans-serif;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: #fff;
+  border: 1px solid rgb(15 118 110 / 0.35);
+  border-radius: 999px;
+  transform: translateX(-50%);
+}
+
+/* Barra de estado */
+.wd-statusbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 26px;
+  padding: 0 12px;
+  color: #475569;
+  font-size: 11px;
+  background: #fff;
+  border-top: 1px solid #cbd5e1;
+}
+.wd-statusbar > span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.wd-statusbar__apa { color: #0f766e; font-weight: 700; }
+.wd-zoom { display: inline-flex; align-items: center; gap: 5px; }
+.wd-zoom input { width: 110px; accent-color: #0f766e; }
+.wd-zoom b { min-width: 34px; text-align: right; color: #0f172a; }
+
+/* Tablas e imágenes dentro del documento (editor, expediente, firma y PDF) */
+.doc-content table,
+.doc-apa table {
+  width: 100%;
+  margin: 6pt 0;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 11pt;
+  line-height: 1.3;
+  page-break-inside: avoid;
+}
+.doc-content th,
+.doc-content td,
+.doc-apa th,
+.doc-apa td {
+  min-width: 1em;
+  padding: 4pt 6pt;
+  vertical-align: top;
+  text-align: left;
+  border: 1px solid #111;
+  text-indent: 0;
+}
+.doc-content th,
+.doc-apa th { font-weight: 700; background: #f1f5f9; }
+.doc-content table p,
+.doc-apa table p { margin: 0; text-indent: 0; }
+.doc-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 6pt auto;
+}
+.tiptap .selectedCell { position: relative; }
+.tiptap .selectedCell::after {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  content: "";
+  background: rgb(20 184 166 / 0.14);
+  pointer-events: none;
+}
+.tiptap img.ProseMirror-selectednode { outline: 2px solid #14b8a6; }
+.tiptap a { color: #1d4ed8; text-decoration: underline; }
+
+/* Clon que se rasteriza para el PDF: hoja sin guías, márgenes ni sombra */
+[data-signum-pdf-clone] .paper::after,
+[data-signum-pdf-clone] .wd-pagebreak { content: none; display: none; }
+[data-signum-pdf-clone] .paper {
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  min-height: 0 !important;
+}
+
+@media (max-width: 900px) {
+  .wd-titlebar { flex-wrap: wrap; padding: 8px 12px; }
+  .wd-actions { width: 100%; justify-content: flex-end; }
+  .wd-tabs__info { display: none; }
+}
+@media print {
+  .wd-titlebar, .wd-ribbon-wrap, .wd-ruler-wrap, .wd-statusbar, .wd-pagebreak { display: none !important; }
+}
+.wd-status.is-error { color: #fecaca; background: rgb(244 63 94 / 0.18); }
+
+
+/* ══ MEMBRETE EDITABLE (encabezado dentro de la hoja) ═══════════════
+   Sello a la izquierda (no editable) y líneas de la entidad a la derecha,
+   editables como cualquier párrafo. Mismo aspecto en editor, expediente,
+   portal de firma y PDF.                                                */
+.doc-letterhead {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 14pt;
+}
+.doc-letterhead__logo {
+  flex: 0 0 auto;
+  display: block;
+  width: 58px;
+  user-select: none;
+}
+.doc-letterhead__logo svg,
+.doc-letterhead__logo img {
+  display: block;
+  width: 58px;
+  height: auto;
+}
+.doc-letterhead__lines {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-top: 4px;
+}
+.doc-letterhead__lines p {
+  margin: 0;
+  min-height: 1.25em;
+  font-family: var(--doc-font-office);
+  font-size: 10pt;
+  line-height: 1.25;
+  color: #6b7280;
+  text-align: left;
+  text-indent: 0;
+  letter-spacing: 0.01em;
+}
+.doc-letterhead__lines p:first-child {
+  font-size: 10.5pt;
+  color: #4b5563;
+}
+.doc-letterhead__lines p:first-child strong {
+  font-weight: 700;
+}
+.doc-apa .doc-letterhead__lines p {
+  line-height: 1.2;
+  text-indent: 0;
+}
+/* Guía sutil en el editor para distinguir la zona del membrete */
+.tiptap .doc-letterhead {
+  padding: 2px 4px 4px 0;
+  border-radius: 3px;
+  transition: background 150ms;
+}
+.tiptap .doc-letterhead:hover {
+  background: rgb(15 118 110 / 0.035);
+}
+
+/* Código/radicado: marcador controlado por SIGNUM (no editable) */
+.doc-code {
+  font-weight: 700;
+}
+.doc-code__value {
+  display: inline-block;
+  min-width: 2ch;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.tiptap .doc-code__value {
+  padding: 0 3px;
+  border-radius: 3px;
+  background: rgb(15 118 110 / 0.08);
+  box-shadow: inset 0 0 0 1px rgb(15 118 110 / 0.18);
+  cursor: default;
+}
+.tiptap .doc-code__value:empty::before {
+  content: "Código pendiente";
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+/* ══ ENCABEZADO Y PIE DE PÁGINA (zona del margen, modelo Word) ═════════ */
+.wd-paper { position: relative; }
+.wd-paper.is-editing-hf .wd-body.is-dimmed { opacity: 0.45; }
+.wd-margin-guides {
+  position: absolute;
+  border: 1px dashed rgb(14 116 144 / 0.14);
+  pointer-events: none;
+}
+.wd-paper::after { content: none; } /* la guía la dibuja .wd-margin-guides con márgenes reales */
+.wd-zone {
+  position: absolute;
+  overflow: visible;
+  min-height: 0.5cm;
+  cursor: text;
+}
+.wd-zone .doc-content { line-height: 1.15; }
+.wd-zone .doc-content p { min-height: 1.15em; }
+.wd-zone:not(.is-active) { pointer-events: none; }
+.wd-zone:not(.is-active) .ProseMirror { pointer-events: none; }
+.wd-paper.is-editing-hf .wd-zone:not(.is-active) { pointer-events: auto; }
+.wd-zone.is-active {
+  outline: 1px dashed rgb(15 118 110 / 0.7);
+  outline-offset: 2px;
+  overflow: visible;
+  z-index: 3;
+  background: rgb(255 255 255 / 0.96);
+}
+.wd-zone__tag {
+  position: absolute;
+  left: -2px;
+  bottom: 100%;
+  padding: 1px 8px;
+  color: #fff;
+  font-family: var(--ff-sans), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: #0f766e;
+  border-radius: 3px 3px 0 0;
+}
+.wd-zone--footer .wd-zone__tag { bottom: auto; top: 100%; border-radius: 0 0 3px 3px; }
+/* Doble clic en el margen superior para entrar al encabezado */
+.wd-paper:not(.is-preview) { cursor: default; }
+/* flow-root: BFC para que los márgenes de salto de página cuenten en la
+   altura medida del cuerpo y no colapsen fuera de la hoja. */
+.wd-body { position: relative; z-index: 2; min-height: 4cm; display: flow-root; }
+.wd-body .ProseMirror { display: flow-root; }
+.doc-page-header .doc-letterhead { margin-bottom: 0; }
+
+/* Regla funcional */
+.wd-ruler { position: relative; height: 22px; overflow: visible; background: #fff; border: 1px solid #cbd5e1; border-radius: 3px; user-select: none; touch-action: none; }
+.wd-ruler.is-disabled { opacity: 0.6; }
+.wd-ruler.is-dragging { cursor: col-resize; }
+.wd-ruler__grip {
+  position: absolute; top: 0; bottom: 0; width: 6px; margin-left: -3px; cursor: col-resize; z-index: 2;
+}
+.wd-ruler__grip:hover { background: rgb(15 118 110 / 0.18); }
+.wd-ruler__first, .wd-ruler__hang, .wd-ruler__right {
+  position: absolute; width: 0; height: 0; z-index: 3; cursor: ew-resize;
+  border-left: 5px solid transparent; border-right: 5px solid transparent; transform: translateX(-5px);
+}
+.wd-ruler__first { top: 1px; border-top: 7px solid #0f766e; }
+.wd-ruler__hang { bottom: 5px; border-bottom: 7px solid #0f766e; }
+.wd-ruler__right { bottom: 5px; border-bottom: 7px solid #0f766e; }
+.wd-ruler__box { position: absolute; bottom: 0; width: 10px; height: 5px; background: #0f766e; transform: translateX(-5px); cursor: ew-resize; z-index: 3; }
+.wd-ruler__first:hover, .wd-ruler__hang:hover, .wd-ruler__right:hover { filter: brightness(1.3); }
+.wd-ruler__tip {
+  position: absolute; top: -26px; padding: 2px 7px; color: #fff; font-size: 10px; font-weight: 700; white-space: nowrap;
+  background: #0f172a; border-radius: 4px; transform: translateX(-50%); pointer-events: none; z-index: 5;
+}
+.wd-tab.is-contextual { color: #0f766e; background: linear-gradient(#ccfbf1, transparent); border-radius: 6px 6px 0 0; }
+.wd-statusbar__exit {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; color: #0f766e; font-weight: 700;
+  background: #ccfbf1; border: 1px solid #99f6e4; border-radius: 999px; cursor: pointer;
+}
+
+/* Diálogo Configurar página */
+.ps-backdrop { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgb(2 6 23 / 0.55); backdrop-filter: blur(3px); }
+.ps-dialog { width: min(520px, 100%); padding: 22px 24px; color: #0f172a; background: #fff; border-radius: 12px; box-shadow: 0 30px 80px rgb(0 0 0 / 0.35); }
+.ps-head { display: flex; align-items: flex-start; justify-content: space-between; }
+.ps-head h2 { margin: 4px 0 0; font-size: 20px; font-weight: 700; }
+.ps-head button { display: grid; width: 30px; height: 30px; place-items: center; color: #64748b; background: #f1f5f9; border: 0; border-radius: 7px; cursor: pointer; }
+.ps-eyebrow { display: inline-flex; align-items: center; gap: 5px; margin: 0; color: #0f766e; font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
+.ps-note { margin: 8px 0 12px; color: #64748b; font-size: 12px; }
+.ps-presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.ps-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; margin: 0 0 12px; padding: 10px 12px 12px; border: 1px solid #e2e8f0; border-radius: 8px; }
+.ps-group legend { padding: 0 6px; color: #334155; font-size: 11px; font-weight: 700; }
+.ps-field { display: grid; grid-template-columns: 1fr 74px 22px; align-items: center; gap: 6px; font-size: 12px; color: #334155; }
+.ps-field input { height: 30px; padding: 0 8px; font-size: 12.5px; border: 1px solid #cbd5e1; border-radius: 6px; }
+.ps-field em { color: #94a3b8; font-style: normal; font-size: 11px; }
+.ps-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
+.ps-actions .wd-action--primary { color: #06201f; }
+
+/* Encabezado/pie en expediente, portal de firma y vista previa */
+.doc-page-header, .doc-page-footer { font-family: var(--doc-font-office); font-size: 10pt; line-height: 1.15; color: #374151; }
+.doc-page-header { margin-bottom: 10pt; }
+.doc-page-footer { margin-top: 14pt; padding-top: 6pt; border-top: 1px solid #e5e7eb; }
+
+/* Membrete compacto dentro del encabezado de página */
+.doc-page-header .doc-letterhead,
+.wd-zone--header .doc-letterhead { gap: 8px; margin: 0; }
+.doc-page-header .doc-letterhead__logo,
+.wd-zone--header .doc-letterhead__logo { width: 42px; }
+.doc-page-header .doc-letterhead__logo svg,
+.doc-page-header .doc-letterhead__logo img,
+.wd-zone--header .doc-letterhead__logo svg,
+.wd-zone--header .doc-letterhead__logo img { width: 42px; }
+.doc-page-header .doc-letterhead__lines,
+.wd-zone--header .doc-letterhead__lines { padding-top: 2px; }
+.doc-page-header .doc-letterhead__lines p,
+.wd-zone--header .doc-letterhead__lines p { font-size: 9pt; line-height: 1.15; min-height: 1.15em; }
+.doc-page-header .doc-letterhead__lines p:first-child,
+.wd-zone--header .doc-letterhead__lines p:first-child { font-size: 9.5pt; }
+.doc-center { text-align: center; text-indent: 0; }
+
+.wd-return {
+  display: flex; align-items: flex-start; gap: 10px; padding: 9px 14px;
+  color: #7c2d12; font-size: 12.5px; line-height: 1.4;
+  background: #fff7ed; border-bottom: 1px solid #fed7aa;
+}
+.wd-return b { color: #9a3412; }
+.wd-return span { color: #9a3412; opacity: .85; }
+
+/* Membrete: código del documento arriba a la derecha */
+.doc-letterhead { position: relative; }
+.doc-letterhead__code {
+  flex: 0 0 auto;
+  max-width: 28%;
+  margin-left: auto;
+  padding-top: 2px;
+  padding-left: 8px;
+  text-align: right;
+  white-space: nowrap;
+}
+.doc-letterhead__lines { flex: 1 1 auto; min-width: 0; }
+.doc-letterhead__code p { margin: 0; text-indent: 0; font-family: var(--doc-font-office); font-size: 9pt; line-height: 1.25; color: #374151; }
+.doc-letterhead__code .doc-code__value { font-weight: 700; }
+.tiptap .doc-letterhead__code .doc-code__value { background: rgb(15 118 110 / 0.08); box-shadow: inset 0 0 0 1px rgb(15 118 110 / 0.18); border-radius: 3px; padding: 0 4px; }
+/* Contacto al cierre del documento (bloque único) */
+.doc-content .doc-contact { margin: 6pt 0 0; }
+.doc-content .doc-contact p { margin: 0; font-size: 10pt; line-height: 1.25; color: #111; text-indent: 0; text-align: left; }
+.tiptap .doc-contact { padding: 2px 4px 2px 0; border-radius: 3px; }
+.tiptap .doc-contact:hover { background: rgb(15 118 110 / 0.035); }
+
+/* Hoja de solo lectura (expediente / portal de firma): misma geometría que el editor */
+.doc-sheet { position: relative; }
+.doc-sheet::after { content: none; }
+.doc-sheet__header, .doc-sheet__footer { position: absolute; }
+.doc-sheet__header .doc-letterhead { margin: 0; }
+.doc-sheet__body { position: relative; }
+
+/* Espacio/estampa de firma: inmediatamente bajo el cierre */
+.doc-content p + .sig-ghost,
+.doc-content p + div[data-signature-slot],
+.tiptap p + div[data-signature-slot] { margin-top: 4pt !important; }
+
+/* Espacio de firma en vista "documento final": limpio, como quedará tras firmar */
+.sig-ghost--final {
+  background: transparent !important;
+  border-color: transparent !important;
+  background-image: none !important;
+}
+.sig-ghost--final .sig-ghost__empty-rule { margin-top: 26mm; }
+.sig-ghost--final .sig-ghost__role { color: #57534e; }
+
+/* ══ SEPARADORES DE PÁGINA (hojas visualmente separadas, como Word) ══ */
+.wd-pagegap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 0;          /* por DEBAJO del texto: el separador nunca tapa una línea */
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+.wd-pagegap__bottom,
+.wd-pagegap__top { display: block; background: #fff; position: relative; }
+.wd-pagegap__bottom { border-bottom: 1px solid #cbd5e1; box-shadow: 0 6px 10px -8px rgb(0 0 0 / 0.35); }
+.wd-pagegap__top { border-top: 1px solid #cbd5e1; }
+.wd-pagegap__void {
+  display: grid;
+  place-items: center;
+  background: #e4e8ee;
+  /* la hoja tiene borde/sombra: el hueco se extiende un poco a los lados para "cortar" la hoja */
+  margin: 0 -2px;
+}
+.wd-pagegap__void em {
+  padding: 1px 9px;
+  color: #64748b;
+  font-family: var(--ff-sans), system-ui, sans-serif;
+  font-size: 8.5px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+}
+.wd-pagegap__header {
+  position: absolute;
+  display: block;
+  padding: 0 2.54cm;
+  opacity: 0.85;
+}
+.wd-pagegap__header .doc-content { line-height: 1.15; }
+.wd-pagegap__header .doc-letterhead { margin: 0; }
+.wd-pagegap.is-quiet .wd-pagegap__void em { display: none; }
+
+/* Bloque que inicia una nueva página (decoración de paginación).
+   El margen viaja en --pg-mt con !important para ganar a reglas de
+   márgenes específicas (p. ej. el espacio de firma tras un párrafo). */
+.tiptap .pm-page-start.pm-page-start {
+  position: relative;
+  margin-top: var(--pg-mt, 0px) !important;
+}
+
+/* Estado (COPIA / FIRMADO / REQUIERE FIRMA…): capa flotante, no ocupa espacio del documento */
+.doc-status-badge { position: absolute; z-index: 5; }
+/* Rótulo de la firma debajo del sello */
+.sig-ghost__role--below { margin-top: 4px; }
+.sig-ghost--signed .sig-ghost__role--below { font-size: 8px; letter-spacing: 0.14em; color: #44403c; }
+
+/* ══ POP-UP DE COMENTARIOS DEL DOCUMENTO ═══════════════════════════ */
+.msg-popup__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgb(2 8 12 / 0.7);
+  backdrop-filter: blur(6px);
+  animation: fade-in 160ms ease-out;
+}
+.msg-popup {
+  position: relative;
+  width: min(720px, 100%);
+  max-height: min(86vh, 900px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgb(34 211 238 / 0.28);
+  border-radius: 14px;
+  background: rgb(8 20 27 / 0.98);
+  box-shadow: 0 40px 100px rgb(0 0 0 / 0.55), 0 0 0 1px rgb(34 211 238 / 0.08) inset;
+  animation: modal-in 200ms ease-out;
+}
+.msg-popup__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  color: #94a3b8;
+  background: rgb(255 255 255 / 0.05);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.msg-popup__close:hover { color: #f1f5f9; background: rgb(255 255 255 / 0.1); }
+.msg-popup__body { overflow-y: auto; padding: 4px; }
+.msg-popup__panel { border: 0 !important; box-shadow: none !important; background: transparent !important; }
+@media (max-width: 640px) {
+  .msg-popup__backdrop { padding: 0; align-items: end; }
+  .msg-popup { max-height: 92vh; border-radius: 14px 14px 0 0; }
+}
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modal-in { from { opacity: 0; transform: translateY(10px) scale(0.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
